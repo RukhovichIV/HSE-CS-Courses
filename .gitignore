@@ -1,0 +1,4 @@
+# Ignoring certain files by lab
+
+# ML hw2 model weights
+courses/ML/hw2/data/*.hdf5
