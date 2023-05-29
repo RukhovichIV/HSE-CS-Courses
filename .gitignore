@@ -1,4 +1,12 @@
-# Ignoring certain files by lab
+# Common
+
+# Secrets
+*.env
+
+# Certain files by lab
 
 # ML hw2 model weights
 courses/ML/hw2/data/*.hdf5
+
+# Course Paper historical data
+courses/Course-Paper/data/historical/data_to*
