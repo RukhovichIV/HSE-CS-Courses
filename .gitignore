@@ -10,3 +10,4 @@ courses/ML/hw2/data/*.hdf5
 
 # Course Paper historical data
 courses/Course-Paper/data/historical/data_to*
+courses/Course-Paper/data/historical/daily_data_for*
