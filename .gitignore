@@ -3,6 +3,14 @@
 # Secrets
 *.env
 
+# MS Office temporary files
+*~$*.doc
+*~$*.docx
+*~$*.ppt
+*~$*.pptx
+*~$*.xls
+*~$*.xlsx
+
 # Certain files by lab
 
 # ML hw2 model weights
