@@ -32,7 +32,7 @@ void pop_back(std::deque<Combination>& deque, const size_t& max_weight) {
 int main()
 {
     std::cin.tie(0), std::cout.tie(0), std::ios_base::sync_with_stdio(0);
-// #define file
+#define file
 #ifdef file
     freopen("input.txt", "r", stdin);
     freopen("output.txt", "w", stdout);
