@@ -6,136 +6,72 @@
 #include <vector>
 #include <deque>
 
-class Combination {
+class Thing {
 public:
-    size_t weight = 0, cost = 0;
-    std::vector<size_t> numbers;
+    uint32_t weight = 0, cost = 0, count = 0;
 };
-
-bool compare_combinations(const Combination& lhs, const Combination& rhs) {
-    return lhs.weight < rhs.weight;
-}
-
-void push_front(std::deque<Combination>& deque, Combination& comb) {
-    while (!deque.empty() && deque.front().cost < comb.cost) {
-        deque.pop_front();
-    }
-    deque.push_front(comb);
-}
-
-void pop_back(std::deque<Combination>& deque, const size_t& max_weight) {
-    while (!deque.empty() && deque.back().weight > max_weight) {
-        deque.pop_back();
-    }
-}
 
 int main()
 {
     std::cin.tie(0), std::cout.tie(0), std::ios_base::sync_with_stdio(0);
-#define file
+// #define file
 #ifdef file
     freopen("input.txt", "r", stdin);
     freopen("output.txt", "w", stdout);
 #endif
-    size_t gems_num, min_w, max_w;
-    std::cin >> gems_num >> min_w >> max_w;
-    std::vector<std::pair<size_t, size_t>> gems(gems_num);
-    for (size_t i = 0; i < gems_num; ++i) {
-        size_t weight, cost;
-        std::cin >> weight >> cost;
-        gems[i] = std::make_pair(weight, cost);
+    size_t types_num, backpack_size;
+    std::cin >> types_num >> backpack_size;
+    std::vector<Thing> things(types_num);
+    for (size_t i = 0; i < types_num; ++i) {
+        std::cin >> things[i].weight >> things[i].cost >> things[i].count;
     }
-    int proc_fi = gems_num / 2, proc_se = static_cast<int>(gems_num - proc_fi);
-    std::vector<Combination> combs_le(1 << proc_fi), combs_ri(1 << proc_se);
 
-    for (int i = 0; i < 1 << proc_fi; ++i) {
-        for (int j = 0; j < proc_fi; ++j) {
-            if (i & (1 << j)) {
-                combs_le[i].weight += gems[j].first;
-                combs_le[i].cost += gems[j].second;
-                combs_le[i].numbers.push_back(j + 1);
-            }
-        }
-    }
-    for (int i = 0; i < 1 << proc_se; ++i) {
-        for (int j = 0; j < proc_se; ++j) {
-            if (i & (1 << j)) {
-                combs_ri[i].weight += gems[proc_fi + j].first;
-                combs_ri[i].cost += gems[proc_fi + j].second;
-                combs_ri[i].numbers.push_back(proc_fi + j + 1);
-            }
-        }
-    }
-    std::sort(combs_le.begin(), combs_le.end(), compare_combinations);
-    std::sort(combs_ri.begin(), combs_ri.end(), compare_combinations);
+    std::vector<size_t> pack_old(backpack_size + 1u, 0u), pack_new(backpack_size + 1u, 0u);
+    for (size_t i = 0u; i < types_num; ++i) {
+        for (uint32_t j = 1u; j <= backpack_size; ++j) {
+            pack_new[j] = std::max(pack_new[j - 1u], pack_old[j]);
 
-    size_t se_le = combs_ri.size() - 1;
-    std::deque<Combination> combs_proc;
-    Combination ans_default = Combination();
-    ans_default.weight = -1;
-    Combination ans_le = Combination(), ans_ri = ans_default;
-    for (size_t i = 0; i < combs_le.size(); ++i) {
-        if (combs_le[i].weight > max_w) {
-            break;
-        }
-        while (combs_le[i].weight + combs_ri[se_le].weight >= min_w) {
-            if (se_le == 0) {
-                if (combs_proc.empty() || combs_proc.front().cost != 0) {
-                    push_front(combs_proc, combs_ri[se_le]);
+            size_t le = 1u, ri = std::min(things[i].count, j / things[i].weight);
+            while (le + 3u < ri) {
+                size_t ml = le + (ri - le) / 3u, mr = ri - (ri - le) / 3u;
+                size_t vle = pack_old[j - ml * things[i].weight] + ml * things[i].cost;
+                size_t vri = pack_old[j - mr * things[i].weight] + mr * things[i].cost;
+                if (vle < vri) {
+                    le = ml;
+                } else {
+                    ri = mr;
                 }
-                break;
             }
-            push_front(combs_proc, combs_ri[se_le]);
-            --se_le;
-        }
-        pop_back(combs_proc, max_w - combs_le[i].weight);
-        if (!combs_proc.empty() && (ans_ri.weight == ans_default.weight ||
-            (combs_le[i].cost + combs_proc.back().cost > ans_le.cost + ans_ri.cost))) {
-            ans_le = combs_le[i];
-            ans_ri = combs_proc.back();
+            for (uint32_t cnt = le; cnt <= ri; ++cnt) {
+                size_t new_val = pack_old[j - cnt * things[i].weight] + cnt * things[i].cost;
+                if (new_val > pack_new[j]) {
+                    pack_new[j] = new_val;
+                }
+            }
 
-            // if (ans_ri.weight == static_cast<size_t>(-1)) {
-            //     std::cout << "No answer\n";
+            // for (size_t cnt = 1; cnt <= things[i].count; ++cnt) {
+            //     if (cnt * things[i].weight > j) {
+            //         break;
+            //     }
+            //     size_t new_val = pack_old[j - cnt * things[i].weight] + cnt * things[i].cost;
+            //     if (new_val > pack_new[j]) {
+            //         pack_new[j] = new_val;
+            //     }
             // }
-            // std::cout << ans_le.weight + ans_ri.weight << " ";
-            // std::cout << ans_le.cost + ans_ri.cost << " | ";
-            // for (auto&& it : ans_le.numbers) {
-            //     std::cout << it << " ";
-            // }
-            // for (auto&& it : ans_ri.numbers) {
-            //     std::cout << it << " ";
-            // }
-            // std::cout << "\n\n";
         }
+        std::swap(pack_new, pack_old);
     }
 
-    size_t ans_size = ans_le.numbers.size() + ans_ri.numbers.size();
-    std::cout << ans_size;
-    if (ans_size) {
-        std::cout << "\n";
-        for (auto&& it : ans_le.numbers) {
-            std::cout << it << " ";
-        }
-        for (auto&& it : ans_ri.numbers) {
-            std::cout << it << " ";
-        }
-    }
+    std::cout << pack_old[backpack_size];
 
-    // std::cout << "\n\nList Combinations:\n";
-    // for (size_t i = 0; i < combs_le.size(); ++i) {
-    //     std::cout << combs_le[i].weight <<  " " << combs_le[i].cost << " | ";
-    //     for (size_t jj = 0; jj < combs_le[i].numbers.size(); ++jj) {
-    //         std::cout << combs_le[i].numbers[jj] << " ";
-    //     }
-    //     std::cout << "\n";
+    // std::cout << "\n\n";
+    // for (auto&& elem : pack_new) {
+    //     std::cout << elem << " ";
     // }
     // std::cout << "\n";
-    // for (size_t i = 0; i < combs_ri.size(); ++i) {
-    //     std::cout << combs_ri[i].weight <<  " " << combs_ri[i].cost << " | ";
-    //     for (size_t jj = 0; jj < combs_ri[i].numbers.size(); ++jj) {
-    //         std::cout << combs_ri[i].numbers[jj] << " ";
-    //     }
-    //     std::cout << "\n";
+    // for (auto&& elem : pack_old) {
+    //     std::cout << elem << " ";
     // }
+
     return 0;
 }
