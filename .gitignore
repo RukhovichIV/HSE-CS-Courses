@@ -11,6 +11,9 @@
 *~$*.xls
 *~$*.xlsx
 
+# C++ executables
+cpp_build/
+
 # Certain files by lab
 
 # ML hw2 model weights
