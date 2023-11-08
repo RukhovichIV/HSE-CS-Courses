@@ -43,6 +43,10 @@
         "utility": "cpp",
         "fstream": "cpp",
         "sstream": "cpp",
-        "stdexcept": "cpp"
-    }
+        "stdexcept": "cpp",
+        "compare": "cpp",
+        "concepts": "cpp",
+        "numbers": "cpp"
+    },
+    "files.useExperimentalFileWatcher": true
 }
