@@ -75,14 +75,6 @@ int main()
         points_w_k_ones[inputs[i].get_num_ones()].push_back(i);
     }
 
-    // for (int i = 0; i < points_w_k_ones.size(); ++i) {
-    //     std::cout << "\n" << i << " : ";
-    //     for (int j = 0; j < points_w_k_ones[i].size(); ++j) {
-    //         std::cout << points_w_k_ones[i][j] << (inputs[points_w_k_ones[i][j]].out == 1 ? "+" : "-") << " ";
-    //     }
-    // }
-    // std::cout << std::endl;
-
     std::vector<std::vector<uint16_t>> wrong_hesse_graph(n);
     std::vector<uint16_t> l_verts;
     for (uint16_t i = 0; i <= k; ++i) {
@@ -95,17 +87,11 @@ int main()
                         wrong_hesse_graph[from].emplace_back(to);
                         wrong_hesse_graph[to].emplace_back(from);
                         if (l_verts.empty() || l_verts.back() != from) l_verts.emplace_back(from);
-                        // std::cout << from << " " << to << std::endl;
                     }
                 }
             }
         }
     }
-
-    // for (auto& v : l_verts) {
-    //     std::cout << v << " ";
-    // }
-    // std::cout << std::endl << std::endl;
 
     std::vector<uint16_t> r_match(n, 1234u);
     std::vector<uint8_t> was(n, 0u);
@@ -113,11 +99,6 @@ int main()
 		was.assign(n, 0u);
 		try_kuhn(wrong_hesse_graph, r_match, was, l_verts[i]);
 	}
-
-    // for (uint16_t i = 0; i < n; ++i) {
-    //     std::cout << i << " " << r_match[i] << "\n";
-    // }
-    // std::cout << std::endl;
 
     std::vector<std::vector<uint16_t>> match_graph(n);
     std::vector<uint8_t> in_match(n, 0u);
@@ -127,25 +108,18 @@ int main()
             uint16_t to = wrong_hesse_graph[from][j];
             if (r_match[to] == from) {
                 match_graph[to].emplace_back(from);
-                // std::cout << from << " <- " << to << "\n";
                 in_match[from] = 1u;
                 in_match[to] = 1u;
             } else {
                 match_graph[from].emplace_back(to);
-                // std::cout << from << " -> " << to << "\n";
             }
         }
     }
-    // std::cout << std::endl;
 
     std::vector<uint16_t> l_free;
     for (uint16_t i = 0; i < l_verts.size(); ++i) {
         if (!in_match[l_verts[i]]) l_free.emplace_back(l_verts[i]);
     }
-    // for (auto& v : l_free) {
-    //     std::cout << v << " ";
-    // }
-    // std::cout << std::endl << std::endl;
 
     was.assign(n, 0u);
     std::vector<uint16_t> min_cover;
