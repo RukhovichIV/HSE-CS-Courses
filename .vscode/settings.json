@@ -48,5 +48,16 @@
         "concepts": "cpp",
         "numbers": "cpp"
     },
-    "files.useExperimentalFileWatcher": true
+    "files.useExperimentalFileWatcher": true,
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.autopep8",
+        "editor.formatOnSave": true,
+    },
+    "autopep8.args": [
+        "--max-line-length",
+        "99"
+    ],
+    "python.analysis.extraPaths": [
+        "./server"
+    ]
 }

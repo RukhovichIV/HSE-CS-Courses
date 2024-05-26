@@ -28,3 +28,6 @@ courses/Course-Paper/data/historical/daily_data_for*
 
 # NLP hw1 data
 courses/NLP/hw1/data/*.csv
+
+# Diploma heavy data
+courses/Diploma/src/data/
